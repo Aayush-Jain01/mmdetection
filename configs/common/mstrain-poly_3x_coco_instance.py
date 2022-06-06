@@ -1,7 +1,7 @@
 _base_ = '../_base_/default_runtime.py'
 # dataset settings
 dataset_type = 'CocoDataset'
-data_root = 'data/coco/'
+data_root = '/kaggle/working/mmdetection/RGBDataset/'
 img_norm_cfg = dict(
     mean=[123.675, 116.28, 103.53], std=[58.395, 57.12, 57.375], to_rgb=True)
 
@@ -50,31 +50,32 @@ data = dict(
         times=3,
         dataset=dict(
             type=dataset_type,
-            ann_file=data_root + 'annotations/instances_train2017.json',
-            img_prefix=data_root + 'train2017/',
+            ann_file=data_root + 'train/_annotations.coco.json',
+            img_prefix=data_root + 'train/',
             pipeline=train_pipeline)),
     val=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'val2017/',
+        ann_file=data_root + 'valid/_annotations.coco.json',
+        img_prefix=data_root + 'valid/',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file=data_root + 'annotations/instances_val2017.json',
-        img_prefix=data_root + 'val2017/',
+        ann_file=data_root + 'test/_annotations.coco.json',
+        img_prefix=data_root + 'test/',
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric=['bbox', 'segm'])
 
 # optimizer
-optimizer = dict(type='SGD', lr=0.02, momentum=0.9, weight_decay=0.0001)
-optimizer_config = dict(grad_clip=None)
+optimizer = dict(type='SGD', lr=0.002, momentum=0.9, weight_decay=0.0001)
+# optimizer_config = dict(grad_clip=None)
+optimizer_config=dict(grad_clip=dict(max_norm=35, norm_type=2))
 
 # learning policy
 # Experiments show that using step=[9, 11] has higher performance
 lr_config = dict(
     policy='step',
     warmup='linear',
-    warmup_iters=500,
+    warmup_iters=1000,
     warmup_ratio=0.001,
     step=[9, 11])
 runner = dict(type='EpochBasedRunner', max_epochs=12)
